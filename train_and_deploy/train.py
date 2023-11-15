@@ -6,7 +6,8 @@ import torch
 import torch.nn as nn
 # from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import DataLoader, Dataset, random_split
-from torchvision.transforms import v2
+from torchvision import transforms
+# from torchvision.transforms import v2
 import matplotlib.pyplot as plt
 import cnn_network
 import cv2 as cv
@@ -37,20 +38,14 @@ class BearCartDataset(Dataset):
 
         if self.augment:
             #not messing with the color, going to do that with noise injection
-            v2.Compose([
-                # v2.ToTensor(),
-                v2.ToImage(),
-                v2.ToDtype(torch.float32, scale=True),
-                v2.RandomHorizontalFlip(0.2),  # Randomly flip the image horizontally
-                v2.RandomVerticalFlip(0.2),
-                v2.RandomRotation(30),      # Randomly rotate the image by up to 30 degrees
+            self.transform = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.RandomHorizontalFlip(0.2),  # Randomly flip the image horizontally
+                transforms.RandomVerticalFlip(0.2),
+                transforms.RandomRotation(30),      # Randomly rotate the image by up to 30 degrees
             ])
         else:
-            self.transform = v2.Compose([
-                v2.ToImage(),
-                v2.ToDtype(torch.float32, scale=True),
-            ])
-
+            self.transform = transforms.ToTensor()
     def add_noise(self, image):
         if self.noise:
             noise = np.random.normal(scale=self.noise_factor, size=image.shape)
