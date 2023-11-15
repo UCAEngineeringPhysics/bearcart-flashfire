@@ -38,13 +38,18 @@ class BearCartDataset(Dataset):
         if self.augment:
             #not messing with the color, going to do that with noise injection
             v2.Compose([
-                v2.ToTensor(),
+                # v2.ToTensor(),
+                v2.ToImage(),
+                v2.ToDtype(torch.float32, scale=True),
                 v2.RandomHorizontalFlip(0.2),  # Randomly flip the image horizontally
                 v2.RandomVerticalFlip(0.2),
                 v2.RandomRotation(30),      # Randomly rotate the image by up to 30 degrees
             ])
         else:
-            self.transform = v2.ToTensor()
+            self.transform = v2.Compose([
+                v2.ToImage(),
+                v2.ToDtype(torch.float32, scale=True),
+            ])
 
     def add_noise(self, image):
         if self.noise:
@@ -121,7 +126,8 @@ train_dataloader = DataLoader(train_data, batch_size=125)
 test_dataloader = DataLoader(test_data, batch_size=125)
 
 # Create model - Pass in image size
-model = cnn_network.hblNet(200, 200).to(DEVICE)  # choose the architecture class from cnn_network.py
+# model = cnn_network.hblNet(200, 200).to(DEVICE)  # choose the architecture class from cnn_network.py
+model = cnn_network.DonkeyNet(200, 200).to(DEVICE)  # choose the architecture class from cnn_network.py
 # Hyper-parameters (lr=0.001, epochs=10 | lr=0.0001, epochs=15 or 20)
 lr = 0.001
 optimizer = torch.optim.Adam(model.parameters(), lr=lr)
