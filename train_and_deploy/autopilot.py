@@ -5,7 +5,7 @@ from gpiozero import Servo, PhaseEnableMotor
 
 from time import time
 import torch
-from torchvision import transforms
+from torchvision.transforms import v2
 import cnn_network
 
 num_parameters = 2
@@ -17,8 +17,8 @@ else:
 # load configs
 # init servo controller
 model_path = os.path.join(sys.path[0], 'models', model_name)
-to_tensor = transforms.ToTensor()
-model = cnn_network.DonkeyNet(200, 200)  # TODO: need config file
+to_tensor = v2.ToTensor()
+model = cnn_network.hblNet(200, 200)  # TODO: need config file
 model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
 # init variables
 throttle, steer = 0., 0.
